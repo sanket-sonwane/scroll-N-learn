@@ -1,0 +1,192 @@
+{
+  "id": "algorithms-break",
+  "trackId": "algorithms",
+  "name": "Break the Algorithm",
+  "subtitle": "Find the bug",
+  "icon": "🧩",
+  "accent": "warning",
+  "connect": ["Counterexample", "Why it Fails", "Invariant", "Correctness"],
+  "next": { "id": "algorithms-graph", "name": "Graph Puzzles", "tagline": "Problems that are easy to state and brutal to solve." },
+  "cards": [
+    {
+      "id": "break-hook",
+      "concept": "Correctness",
+      "type": "hook",
+      "objective": "Create curiosity about finding a bug",
+      "hook": "I wrote an algorithm.",
+      "statement": "Can you break it?",
+      "difficulty": 1,
+      "prerequisites": [],
+      "next": ["break-algorithm"],
+      "attentionPattern": "challenge invitation",
+      "rhythm": "low"
+    },
+    {
+      "id": "break-algorithm",
+      "concept": "Correctness",
+      "type": "visual",
+      "objective": "Show a flawed algorithm behaving perfectly on a normal input",
+      "hook": "Looks fine...",
+      "statement": "On a normal input it finds the max correctly. Watch it succeed.",
+      "visual": {
+        "kind": "arrayRunner",
+        "config": {
+          "algorithm": "findMax",
+          "mode": "run",
+          "array": [5, 3, 8, 1],
+          "flaw": "zero-init"
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["break-hook"],
+      "next": ["break-hunt"],
+      "attentionPattern": "false confidence",
+      "rhythm": "medium"
+    },
+    {
+      "id": "break-hunt",
+      "concept": "Counterexample",
+      "type": "challenge",
+      "objective": "Let the learner find the input that breaks the algorithm",
+      "hook": "Which input breaks it?",
+      "challenge": {
+        "label": "findMax · max starts at 0",
+        "pseudocode": [
+          "max = 0",
+          "for each value x:",
+          "→ if x > max: max = x",
+          "→ return max"
+        ],
+        "flaw": "zero-init",
+        "inputs": [
+          { "id": "in1", "label": "all positive", "array": [5, 3, 8, 1], "breaks": false },
+          { "id": "in2", "label": "mixed", "array": [7, 9, 4, 6], "breaks": false },
+          { "id": "in3", "label": "all negative", "array": [-2, -5, -1, -8], "breaks": true }
+        ],
+        "success": "You broke it."
+      },
+      "difficulty": 3,
+      "prerequisites": ["break-algorithm", "correctness"],
+      "next": ["break-why"],
+      "attentionPattern": "hunt and discovery",
+      "rhythm": "high"
+    },
+    {
+      "id": "break-why",
+      "concept": "Counterexample",
+      "type": "visual",
+      "objective": "Replay the failure to expose the wrong assumption",
+      "hook": "Now watch it fail.",
+      "statement": "max started at 0. Every value is negative — so 0 wins without being in the array.",
+      "visual": {
+        "kind": "arrayRunner",
+        "config": {
+          "algorithm": "findMax",
+          "mode": "run",
+          "array": [-2, -5, -1, -8],
+          "flaw": "zero-init"
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["break-hunt", "counterexample"],
+      "next": ["break-universal"],
+      "attentionPattern": "replay to diagnose",
+      "rhythm": "high"
+    },
+    {
+      "id": "break-universal",
+      "concept": "Correctness",
+      "type": "concept",
+      "objective": "Introduce the universal requirement",
+      "hook": "An algorithm must work for every valid input.",
+      "statement": "Not merely for the examples we tested.",
+      "facts": [
+        "One failing input is enough.",
+        "Finding the failure is a win — it teaches you the boundary.",
+        "The input is the judge."
+      ],
+      "difficulty": 2,
+      "prerequisites": ["break-why"],
+      "next": ["break-fixed"],
+      "attentionPattern": "quiet principle",
+      "rhythm": "low"
+    },
+    {
+      "id": "break-fixed",
+      "concept": "Correctness",
+      "type": "visual",
+      "objective": "Run the repaired algorithm on the same counterexample",
+      "hook": "Repaired.",
+      "statement": "max starts at a[0]. Same input — the failure disappears.",
+      "visual": {
+        "kind": "arrayRunner",
+        "config": {
+          "algorithm": "findMax",
+          "mode": "run",
+          "array": [-2, -5, -1, -8]
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["break-universal"],
+      "next": ["break-concept"],
+      "attentionPattern": "problem → fix → payoff",
+      "rhythm": "high"
+    },
+    {
+      "id": "break-concept",
+      "concept": "Correctness",
+      "type": "concept",
+      "objective": "Anchor the limit of testing",
+      "hook": "Testing can reveal a bug.",
+      "statement": "It cannot prove that no bug exists.",
+      "facts": [
+        "A counterexample disproves an algorithm.",
+        "Passing tests only cover what you tried.",
+        "This is why we eventually reason, not just test."
+      ],
+      "difficulty": 2,
+      "prerequisites": ["break-fixed"],
+      "next": ["break-map"],
+      "attentionPattern": "strong anchor",
+      "rhythm": "medium"
+    },
+    {
+      "id": "break-map",
+      "concept": "Correctness",
+      "type": "concept_map",
+      "objective": "Show the path from counterexample to formal reasoning",
+      "hook": "How we move toward proof.",
+      "conceptMap": {
+        "nodes": [
+          { "id": "counterexample", "label": "Counterexample" },
+          { "id": "why", "label": "Why it fails" },
+          { "id": "invariant", "label": "Invariant / reasoning" },
+          { "id": "correctness", "label": "Correctness", "kind": "highlight" }
+        ],
+        "links": [
+          { "from": "counterexample", "to": "why" },
+          { "from": "why", "to": "invariant" },
+          { "from": "invariant", "to": "correctness" }
+        ]
+      },
+      "difficulty": 3,
+      "prerequisites": ["break-concept"],
+      "next": ["break-transition"],
+      "attentionPattern": "conceptual map",
+      "rhythm": "low"
+    },
+    {
+      "id": "break-transition",
+      "concept": "Correctness",
+      "type": "hook",
+      "objective": "Transition into graph problems",
+      "hook": "Now for problems where even finding a good solution is the hard part.",
+      "statement": "Graph puzzles.",
+      "difficulty": 1,
+      "prerequisites": ["break-map"],
+      "next": [],
+      "attentionPattern": "curiosity segue",
+      "rhythm": "low"
+    }
+  ]
+}

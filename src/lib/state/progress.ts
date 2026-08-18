@@ -1,56 +1,63 @@
-const KEY = "scrolllearn:progress:v0";
+const KEY = "scrolllearn:progress:v1";
 
-export type ProgressState = {
-  trackId: string;
+export type ExpProgress = {
   index: number;
   completed: string[];
   startedAt: number;
   updatedAt: number;
 };
 
-const DEFAULTS: Omit<ProgressState, "trackId"> = {
+type ProgressMap = Record<string, ExpProgress>;
+
+const DEFAULTS: ExpProgress = {
   index: 0,
   completed: [],
   startedAt: 0,
   updatedAt: 0,
 };
 
-function safeRead(): ProgressState | null {
+function safeRead(): ProgressMap | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as ProgressState;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) return parsed as ProgressMap;
+    return null;
   } catch {
     return null;
   }
 }
 
-export function readProgress(trackId: string): ProgressState {
-  const stored = safeRead();
-  if (stored && stored.trackId === trackId) return stored;
-  return { trackId, ...DEFAULTS };
-}
-
-export function writeProgress(state: ProgressState): void {
+function writeMap(map: ProgressMap): void {
   if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(KEY, JSON.stringify(state));
+    window.localStorage.setItem(KEY, JSON.stringify(map));
   } catch {
     /* storage unavailable — fail silently */
   }
 }
 
+export function readProgress(experienceId: string): ExpProgress {
+  return safeRead()?.[experienceId] ?? { ...DEFAULTS };
+}
+
+export function writeProgress(experienceId: string, state: ExpProgress): void {
+  const map = safeRead() ?? {};
+  map[experienceId] = state;
+  writeMap(map);
+}
+
 export function recordCardSeen(
-  trackId: string,
+  experienceId: string,
   index: number,
   cardId: string,
 ): void {
-  const state = readProgress(trackId);
+  const state = readProgress(experienceId);
   const completed = state.completed.includes(cardId)
     ? state.completed
     : [...state.completed, cardId];
-  writeProgress({
+  writeProgress(experienceId, {
     ...state,
     index,
     completed,
@@ -59,6 +66,8 @@ export function recordCardSeen(
   });
 }
 
-export function clearProgress(trackId: string): void {
-  writeProgress({ trackId, ...DEFAULTS });
+export function clearProgress(experienceId: string): void {
+  const map = safeRead() ?? {};
+  delete map[experienceId];
+  writeMap(map);
 }

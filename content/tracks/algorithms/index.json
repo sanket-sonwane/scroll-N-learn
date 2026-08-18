@@ -1,0 +1,80 @@
+{
+  "id": "algorithms",
+  "title": "Design & Analysis of Algorithms",
+  "subtitle": "How algorithms behave, scale, fail and survive",
+  "domain": "Computer Science",
+  "chapter": "Algorithms",
+  "topic": "Complexity · Execution · Correctness · Graphs",
+  "concepts": [
+    {
+      "id": "growth-rate",
+      "name": "Growth rate",
+      "description": "How quickly an algorithm's work grows as its input grows."
+    },
+    {
+      "id": "input-size",
+      "name": "Input size",
+      "description": "The scale of the problem an algorithm must handle."
+    },
+    {
+      "id": "operations",
+      "name": "Operations",
+      "description": "The individual steps an algorithm performs."
+    },
+    {
+      "id": "iteration",
+      "name": "Iteration",
+      "description": "Repeating a basic operation many times."
+    },
+    {
+      "id": "dominant-operation",
+      "name": "Dominant operation",
+      "description": "The operation that happens most often and dominates the cost."
+    },
+    {
+      "id": "linear-time",
+      "name": "Linear time",
+      "description": "Work grows in proportion to the input size."
+    },
+    {
+      "id": "best-case",
+      "name": "Best case",
+      "description": "The input on which an algorithm does the least work."
+    },
+    {
+      "id": "worst-case",
+      "name": "Worst case",
+      "description": "The input on which an algorithm does the most work."
+    },
+    {
+      "id": "average-case",
+      "name": "Average case",
+      "description": "The expected work over typical inputs."
+    },
+    {
+      "id": "correctness",
+      "name": "Correctness",
+      "description": "An algorithm must work for every valid input."
+    },
+    {
+      "id": "counterexample",
+      "name": "Counterexample",
+      "description": "A single input that breaks an algorithm."
+    },
+    {
+      "id": "graph",
+      "name": "Graph",
+      "description": "Nodes connected by edges."
+    },
+    {
+      "id": "vertex-cover",
+      "name": "Vertex cover",
+      "description": "The smallest set of nodes that touches every edge."
+    },
+    {
+      "id": "hamiltonian-cycle",
+      "name": "Hamiltonian cycle",
+      "description": "A route that visits every vertex exactly once and returns to the start."
+    }
+  ]
+}

@@ -1,0 +1,263 @@
+{
+  "id": "algorithms-execution",
+  "trackId": "algorithms",
+  "name": "Run an Algorithm",
+  "subtitle": "Watch the logic execute",
+  "icon": "▶",
+  "accent": "success",
+  "connect": ["Input Size", "Operations", "Iteration", "Dominant Operation", "Linear Time"],
+  "next": { "id": "algorithms-break", "name": "Break the Algorithm", "tagline": "Every algorithm has an input that defeats it." },
+  "cards": [
+    {
+      "id": "execution-input",
+      "concept": "Input size",
+      "type": "visual",
+      "objective": "Show a concrete input before any algorithm",
+      "hook": "Find the largest number.",
+      "statement": "An array of numbers. One simple job. Watch how the algorithm decides.",
+      "visual": {
+        "kind": "arrayRunner",
+        "config": {
+          "algorithm": "findMax",
+          "mode": "run",
+          "array": [7, 2, 9, 4, 1]
+        }
+      },
+      "difficulty": 1,
+      "prerequisites": [],
+      "next": ["execution-predict"],
+      "attentionPattern": "set up the question",
+      "rhythm": "low"
+    },
+    {
+      "id": "execution-predict",
+      "concept": "Operations",
+      "type": "prediction",
+      "objective": "Prime the learner to think about the scanning strategy",
+      "hook": "Predict first",
+      "interaction": {
+        "kind": "predict",
+        "prompt": "How would an algorithm find the maximum?",
+        "options": [
+          {
+            "label": "Sort everything first",
+            "correct": false,
+            "explanation": "Sorting does more work than the job needs — it computes far more than the answer."
+          },
+          {
+            "label": "Compare while scanning, keep the biggest",
+            "correct": true,
+            "explanation": "One pass. Remember the best seen so far, compare as you go."
+          },
+          {
+            "label": "Check every pair",
+            "correct": false,
+            "explanation": "Comparing every pair is far more work than a single pass requires."
+          }
+        ]
+      },
+      "reveal": "A single scan, remembering the best so far, is all it takes.",
+      "difficulty": 2,
+      "prerequisites": ["execution-input"],
+      "next": ["execution-run"],
+      "attentionPattern": "prediction → payoff",
+      "rhythm": "high"
+    },
+    {
+      "id": "execution-run",
+      "concept": "Operations",
+      "type": "visual",
+      "objective": "Show the algorithm executing step by step",
+      "hook": "max = a[0].",
+      "statement": "Watch the pointer scan. max only changes when a bigger value appears. Follow i, max and comparisons.",
+      "visual": {
+        "kind": "arrayRunner",
+        "config": {
+          "algorithm": "findMax",
+          "mode": "run",
+          "array": [7, 2, 9, 4, 1],
+          "dominantOp": "comparison"
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["execution-predict", "iteration"],
+      "next": ["execution-count"],
+      "attentionPattern": "guided observation",
+      "rhythm": "high"
+    },
+    {
+      "id": "execution-count",
+      "concept": "Operations",
+      "type": "quiz",
+      "objective": "Check that the learner can count comparisons",
+      "hook": "Check the count",
+      "interaction": {
+        "kind": "quiz",
+        "prompt": "How many comparisons for five numbers?",
+        "options": [
+          { "label": "4", "correct": true, "explanation": "max starts at a[0], so each of the remaining 4 elements gets compared." },
+          { "label": "5", "correct": false, "explanation": "The first element sets the initial max — it is not compared with itself." },
+          { "label": "3", "correct": false, "explanation": "Every element after the first gets one comparison: that is 4, not 3." }
+        ]
+      },
+      "reveal": "5 numbers → 4 comparisons. Work tracks the input size.",
+      "difficulty": 2,
+      "prerequisites": ["execution-run"],
+      "next": ["execution-inputsize"],
+      "attentionPattern": "micro-challenge",
+      "rhythm": "medium"
+    },
+    {
+      "id": "execution-inputsize",
+      "concept": "Input size",
+      "type": "visual",
+      "objective": "Show comparisons growing with input size",
+      "hook": "More elements, more comparisons.",
+      "statement": "Double the array and the work roughly doubles. The relationship is one-to-one.",
+      "visual": {
+        "kind": "arrayRunner",
+        "config": {
+          "algorithm": "findMax",
+          "mode": "run",
+          "array": [3, 8, 1, 6, 11, 2, 9, 5, 10, 4, 7, 12],
+          "dominantOp": "comparison"
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["execution-count", "input-size"],
+      "next": ["execution-dominant"],
+      "attentionPattern": "scale comparison",
+      "rhythm": "medium"
+    },
+    {
+      "id": "execution-dominant",
+      "concept": "Dominant operation",
+      "type": "visual",
+      "objective": "Highlight the operation that dominates the cost",
+      "hook": "What are we really counting?",
+      "statement": "Everything else is bookkeeping. The comparison is the operation that happens most — it dominates.",
+      "visual": {
+        "kind": "arrayRunner",
+        "config": {
+          "algorithm": "findMax",
+          "mode": "run",
+          "array": [9, 3, 8, 5],
+          "dominantOp": "comparison"
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["execution-inputsize", "dominant-operation"],
+      "next": ["execution-on"],
+      "attentionPattern": "pulse on the key action",
+      "rhythm": "high"
+    },
+    {
+      "id": "execution-on",
+      "concept": "Linear time",
+      "type": "equation",
+      "objective": "Introduce O(n) as the name for this behavior",
+      "hook": "One pass through n elements.",
+      "statement": "About n operations. That behavior has a name.",
+      "notation": "O(n)",
+      "footnote": "Linear time — work grows in proportion to the input.",
+      "difficulty": 2,
+      "prerequisites": ["execution-dominant", "linear-time"],
+      "next": ["execution-best"],
+      "attentionPattern": "formal reveal",
+      "rhythm": "medium"
+    },
+    {
+      "id": "execution-best",
+      "concept": "Best case",
+      "type": "visual",
+      "objective": "Show the best case for linear search",
+      "hook": "Best case.",
+      "statement": "The target sits at the very front. One comparison and it is done.",
+      "visual": {
+        "kind": "arrayRunner",
+        "config": {
+          "algorithm": "linearSearch",
+          "mode": "best",
+          "array": [42, 3, 7, 9, 1],
+          "target": 42
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["execution-on", "best-case"],
+      "next": ["execution-worst"],
+      "attentionPattern": "short payoff",
+      "rhythm": "low"
+    },
+    {
+      "id": "execution-worst",
+      "concept": "Worst case",
+      "type": "visual",
+      "objective": "Show the worst case for linear search",
+      "hook": "Worst case.",
+      "statement": "The target hides at the very end. The whole array gets scanned first.",
+      "visual": {
+        "kind": "arrayRunner",
+        "config": {
+          "algorithm": "linearSearch",
+          "mode": "worst",
+          "array": [1, 3, 7, 9, 42],
+          "target": 42
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["execution-best", "worst-case"],
+      "next": ["execution-average"],
+      "attentionPattern": "long anticipation",
+      "rhythm": "high"
+    },
+    {
+      "id": "execution-average",
+      "concept": "Average case",
+      "type": "visual",
+      "objective": "Show typical behavior when the target sits somewhere in the middle",
+      "hook": "Average case.",
+      "statement": "On a typical input the target sits somewhere in between — about half the array gets scanned.",
+      "visual": {
+        "kind": "arrayRunner",
+        "config": {
+          "algorithm": "linearSearch",
+          "mode": "average",
+          "array": [5, 2, 8, 3, 7, 1, 9, 4, 6, 10],
+          "target": 42
+        }
+      },
+      "difficulty": 3,
+      "prerequisites": ["execution-worst", "average-case"],
+      "next": ["execution-custom"],
+      "attentionPattern": "sampled expectation",
+      "rhythm": "medium"
+    },
+    {
+      "id": "execution-custom",
+      "concept": "Operations",
+      "type": "execution",
+      "objective": "Let the learner run the algorithm on their own input",
+      "hook": "Your turn to choose the input.",
+      "statement": "Type any array — watch the same algorithm execute against your data.",
+      "visual": {
+        "kind": "arrayRunner",
+        "config": {
+          "algorithm": "findMax",
+          "mode": "custom",
+          "array": [7, 2, 9, 4, 1],
+          "dominantOp": "comparison"
+        }
+      },
+      "interaction": {
+        "kind": "customInput",
+        "prompt": "Type an array of numbers, separated by commas.",
+        "placeholder": "7,2,9,4,1"
+      },
+      "difficulty": 3,
+      "prerequisites": ["execution-average"],
+      "next": [],
+      "attentionPattern": "hands-on control",
+      "rhythm": "high"
+    }
+  ]
+}

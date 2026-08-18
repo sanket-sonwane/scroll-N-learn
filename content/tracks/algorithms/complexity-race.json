@@ -1,0 +1,241 @@
+{
+  "id": "algorithms-complexity",
+  "trackId": "algorithms",
+  "name": "Complexity Race",
+  "subtitle": "How algorithms behave at scale",
+  "icon": "⚡",
+  "accent": "info",
+  "connect": ["Input Size", "Operations", "Growth", "Complexity"],
+  "next": { "id": "algorithms-execution", "name": "Run an Algorithm", "tagline": "See where that work actually comes from." },
+  "cards": [
+    {
+      "id": "complexity-hook",
+      "concept": "Growth rate",
+      "type": "hook",
+      "objective": "Create curiosity about which algorithm wins at scale",
+      "hook": "Which algorithm survives when the input gets huge?",
+      "statement": "Three runners. Same race. Very different engines.",
+      "difficulty": 1,
+      "prerequisites": [],
+      "next": ["complexity-small"],
+      "attentionPattern": "single bold question",
+      "rhythm": "low"
+    },
+    {
+      "id": "complexity-small",
+      "concept": "Input size",
+      "type": "simulation",
+      "objective": "Show that at small input sizes all growth classes look similar",
+      "hook": "They look almost similar.",
+      "statement": "At n = 10 every runner is neck and neck. Drag the input size and watch what changes.",
+      "visual": {
+        "kind": "growthRace",
+        "config": {
+          "functions": ["log", "linear", "quadratic"],
+          "display": "race",
+          "initialN": 10,
+          "maxN": 100,
+          "interactive": true,
+          "steps": [10, 100],
+          "label": "comparisons"
+        }
+      },
+      "difficulty": 1,
+      "prerequisites": ["complexity-hook", "input-size"],
+      "next": ["complexity-scale"],
+      "attentionPattern": "interactive discovery",
+      "rhythm": "high"
+    },
+    {
+      "id": "complexity-scale",
+      "concept": "Growth rate",
+      "type": "visual",
+      "objective": "Show n² beginning to fall behind as n reaches 100",
+      "hook": "n = 100.",
+      "statement": "n² starts to fall behind. The gap will not close.",
+      "visual": {
+        "kind": "growthRace",
+        "config": {
+          "functions": ["log", "linear", "quadratic"],
+          "display": "race",
+          "initialN": 10,
+          "maxN": 100,
+          "label": "comparisons"
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["complexity-small"],
+      "next": ["complexity-huge"],
+      "attentionPattern": "animated sweep to reveal gap",
+      "rhythm": "medium"
+    },
+    {
+      "id": "complexity-huge",
+      "concept": "Growth rate",
+      "type": "visual",
+      "objective": "Show quadratic acceleration at n = 10,000",
+      "hook": "n = 10,000.",
+      "statement": "The quadratic accelerates off the chart. Growth rate, not speed, decides this.",
+      "visual": {
+        "kind": "growthRace",
+        "config": {
+          "functions": ["log", "linear", "quadratic"],
+          "display": "race",
+          "initialN": 10,
+          "maxN": 10000,
+          "label": "comparisons"
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["complexity-scale"],
+      "next": ["complexity-exponential"],
+      "attentionPattern": "anticipation then payoff",
+      "rhythm": "high"
+    },
+    {
+      "id": "complexity-exponential",
+      "concept": "Growth rate",
+      "type": "visual",
+      "objective": "Introduce 2ⁿ and let it leave the frame",
+      "hook": "Now meet 2ⁿ.",
+      "statement": "As n grows, the curve leaves the chart entirely. The camera pulls back.",
+      "visual": {
+        "kind": "growthRace",
+        "config": {
+          "functions": ["linear", "quadratic", "exponential"],
+          "display": "race",
+          "initialN": 5,
+          "maxN": 50,
+          "leaveFrame": true,
+          "label": "comparisons"
+        }
+      },
+      "difficulty": 3,
+      "prerequisites": ["complexity-huge", "growth-rate"],
+      "next": ["complexity-universe"],
+      "attentionPattern": "explosive reveal",
+      "rhythm": "high"
+    },
+    {
+      "id": "complexity-universe",
+      "concept": "Growth rate",
+      "type": "visual",
+      "objective": "Map every growth class on one relative scale",
+      "hook": "The complexity universe.",
+      "statement": "Every class has its own shape. The gap between them only widens.",
+      "visual": {
+        "kind": "growthRace",
+        "config": {
+          "functions": ["constant", "log", "linear", "nlogn", "quadratic", "exponential", "factorial"],
+          "display": "universe",
+          "maxN": 1000
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["complexity-exponential"],
+      "next": ["complexity-rank"],
+      "attentionPattern": "catalogue reveal",
+      "rhythm": "low"
+    },
+    {
+      "id": "complexity-rank",
+      "concept": "Growth rate",
+      "type": "comparison",
+      "objective": "Test the ability to order growth classes",
+      "hook": "Slower to faster.",
+      "statement": "Order the growth classes — from the slowest to the fastest.",
+      "interaction": {
+        "kind": "rank",
+        "prompt": "Drag each class into increasing growth order.",
+        "items": [
+          { "id": "logn", "label": "O(log n)" },
+          { "id": "linear", "label": "O(n)" },
+          { "id": "nlogn", "label": "O(n log n)" },
+          { "id": "quadratic", "label": "O(n²)" },
+          { "id": "exponential", "label": "O(2ⁿ)" },
+          { "id": "factorial", "label": "O(n!)" }
+        ],
+        "correctOrder": ["logn", "linear", "nlogn", "quadratic", "exponential", "factorial"]
+      },
+      "difficulty": 3,
+      "prerequisites": ["complexity-universe", "growth-rate"],
+      "next": ["complexity-billion"],
+      "attentionPattern": "interactive reorder",
+      "rhythm": "high"
+    },
+    {
+      "id": "complexity-billion",
+      "concept": "Linear time",
+      "type": "prediction",
+      "objective": "Connect growth classes to real dataset sizes",
+      "hook": "Practical check",
+      "interaction": {
+        "kind": "predict",
+        "prompt": "Which one would you choose for a billion-item dataset?",
+        "options": [
+          {
+            "label": "O(n²)",
+            "correct": false,
+            "explanation": "At n = 10⁹ that is ≈ 10¹⁸ comparisons — decades on a billion ops per second."
+          },
+          {
+            "label": "O(n log n)",
+            "correct": true,
+            "explanation": "≈ 30 billion steps — seconds, not years. This scales."
+          },
+          {
+            "label": "O(2ⁿ)",
+            "correct": false,
+            "explanation": "2ⁿ already hits a billion at n = 30. At n = 10⁹ it is physically impossible."
+          },
+          {
+            "label": "O(n!)",
+            "correct": false,
+            "explanation": "n! grows faster than exponential — unusable for any large input."
+          }
+        ]
+      },
+      "reveal": "For a billion items, anything quadratic or worse is effectively unusable. That is what growth rate decides.",
+      "difficulty": 3,
+      "prerequisites": ["complexity-rank"],
+      "next": ["complexity-compress"],
+      "attentionPattern": "predict then payoff",
+      "rhythm": "high"
+    },
+    {
+      "id": "complexity-compress",
+      "concept": "Growth rate",
+      "type": "concept",
+      "objective": "Compress the experience into one definition",
+      "hook": "Complexity describes how algorithmic work grows as the input grows.",
+      "statement": "It is not about speed. It is about how the work scales.",
+      "facts": [
+        "Small inputs hide the difference.",
+        "Large inputs expose it completely.",
+        "The curve is the mental image."
+      ],
+      "difficulty": 1,
+      "prerequisites": ["complexity-billion"],
+      "next": ["complexity-transition"],
+      "attentionPattern": "quiet compression",
+      "rhythm": "low"
+    },
+    {
+      "id": "complexity-transition",
+      "concept": "Growth rate",
+      "type": "visual",
+      "objective": "Morph the O(n) curve into a loop as a transition to execution",
+      "hook": "Now let's see where that work actually comes from.",
+      "statement": "The curve is a loop in disguise — one pass through n elements is about n operations.",
+      "visual": {
+        "kind": "curveToLoop",
+        "config": { "n": 10 }
+      },
+      "difficulty": 2,
+      "prerequisites": ["complexity-compress"],
+      "next": [],
+      "attentionPattern": "concept transformation",
+      "rhythm": "medium"
+    }
+  ]
+}

@@ -29,70 +29,168 @@ for (const vp of viewports) {
   await page.waitForTimeout(800);
   await page.screenshot({ path: `${OUT}/${vp.name}-00-home.png` });
 
-  // Feed
-  await page.goto(`${BASE}/feed/0`, { waitUntil: "networkidle" });
-  await page.waitForTimeout(1200);
+  const experiences = [
+    { id: "algorithms-complexity", slug: "complexity", total: 10 },
+    { id: "algorithms-execution", slug: "execution", total: 11 },
+    { id: "algorithms-break", slug: "break", total: 9 },
+    { id: "algorithms-graph", slug: "graph", total: 12 },
+  ];
 
-  const total = 10;
-  for (let i = 0; i < total; i++) {
-    await page.waitForTimeout(1600);
-    await page.screenshot({ path: `${OUT}/${vp.name}-card-${String(i + 1).padStart(2, "0")}.png` });
+  for (const exp of experiences) {
+    await page.goto(`${BASE}/feed/${exp.id}/0`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(1200);
 
-    // Interactions on specific cards
-    if (i === 1) {
-      // Prediction card: click the correct option ("Recomputes attention over all of them")
-      const correct = page.locator("button", { hasText: "Recomputes attention over all of them" });
-      if (await correct.count()) {
-        await correct.first().click();
-        await page.waitForTimeout(900);
-        await page.screenshot({ path: `${OUT}/${vp.name}-card-02-answered.png` });
-      }
-    }
+    for (let i = 0; i < exp.total; i++) {
+      await page.waitForTimeout(1500);
+      const pad = String(i + 1).padStart(2, "0");
+      await page.screenshot({ path: `${OUT}/${vp.name}-${exp.slug}-${pad}.png` });
 
-    if (i === 5) {
-      // Simulation card: drag the query node toward "sat"
-      try {
-        const moved = await page.evaluate(() => {
-          const svg = document.querySelector('svg[aria-label^="Interactive graph"]');
-          if (!svg) return false;
-          const ctm = svg.getScreenCTM();
-          if (!ctm) return false;
-          const map = (x, y) => ({ x: ctm.a * x + ctm.c * y + ctm.e, y: ctm.b * x + ctm.d * y + ctm.f });
-          window.__drag = { a: map(50, 75), b: map(62, 25) };
-          return true;
-        });
-        if (moved) {
-          const { a, b } = await page.evaluate(() => window.__drag);
-          await page.mouse.move(a.x, a.y);
-          await page.mouse.down();
-          await page.mouse.move(b.x, b.y, { steps: 12 });
-          await page.mouse.up();
-          await page.waitForTimeout(700);
-          await page.screenshot({ path: `${OUT}/${vp.name}-card-06-dragged.png` });
+      // --- Experience A: Complexity Race ---
+      if (exp.slug === "complexity") {
+        if (i === 1) {
+          // Interactive slider: push input size to 100
+          const slider = page.locator('[data-offset="0"]').locator('input[type="range"]');
+          if (await slider.count()) {
+            await slider.evaluate((el) => {
+              el.value = "100";
+              el.dispatchEvent(new Event("input", { bubbles: true }));
+            });
+            await page.waitForTimeout(600);
+            await page.screenshot({ path: `${OUT}/${vp.name}-complexity-02-slider100.png` });
+          } else {
+            errors.push(`[${vp.name}] complexity card 2: slider not found`);
+          }
         }
-      } catch (e) {
-        errors.push(`[${vp.name}] drag error: ${e.message}`);
+        if (i === 6) {
+          // Drag-to-rank: pull O(n!) from the bottom to the top
+          try {
+            const row = page
+              .locator('[data-offset="0"]')
+              .locator('div[class*="cursor-grab"]')
+              .filter({ hasText: "O(n!)" })
+              .first();
+            if (await row.count()) {
+              const box = await row.boundingBox();
+              if (box) {
+                await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+                await page.mouse.down();
+                await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2 - 230, { steps: 14 });
+                await page.mouse.up();
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: `${OUT}/${vp.name}-complexity-07-reordered.png` });
+              }
+              await page.getByRole("button", { name: "check order" }).click();
+              await page.waitForTimeout(700);
+              await page.screenshot({ path: `${OUT}/${vp.name}-complexity-07-checked.png` });
+              await page.getByRole("button", { name: "show answer" }).click();
+              await page.waitForTimeout(500);
+            } else {
+              errors.push(`[${vp.name}] complexity card 7: rank row not found`);
+            }
+          } catch (e) {
+            errors.push(`[${vp.name}] complexity rank error: ${e.message}`);
+          }
+        }
+        if (i === 7) {
+          // Prediction: pick the scalable option
+          const correct = page.locator('[data-offset="0"]').locator("button", { hasText: "O(n log n)" });
+          if (await correct.count()) {
+            await correct.first().click();
+            await page.waitForTimeout(800);
+            await page.screenshot({ path: `${OUT}/${vp.name}-complexity-08-answered.png` });
+          }
+        }
       }
+
+      // --- Experience B: Algorithm Execution ---
+      if (exp.slug === "execution" && i === 10) {
+        // Custom input: run the algorithm on the user's array
+        const input = page.locator('[data-offset="0"]').locator('input[id^="array-"]');
+        if (await input.count()) {
+          await input.fill("1,5,2,9,3");
+          await page.locator('[data-offset="0"]').getByRole("button", { name: "run it" }).click();
+          await page.waitForTimeout(700);
+          await page.screenshot({ path: `${OUT}/${vp.name}-execution-11-custom.png` });
+        }
+      }
+
+      // --- Experience C: Break the Algorithm ---
+      if (exp.slug === "break" && i === 2) {
+        // Counterexample hunt: pick the all-negative array
+        const breaker = page.locator('[data-offset="0"]').locator("button", { hasText: "-2  -5  -1  -8" });
+        if (await breaker.count()) {
+          await breaker.first().click();
+          await page.waitForTimeout(900);
+          await page.screenshot({ path: `${OUT}/${vp.name}-break-03-broke.png` });
+          const broke = await page.locator('[data-offset="0"]').getByText("You broke it.").count();
+          if (!broke) errors.push(`[${vp.name}] break card 3: 'You broke it' not shown`);
+          const fix = page.locator('[data-offset="0"]').getByRole("button", { name: "Fix it" });
+          if (await fix.count()) {
+            await fix.click();
+            await page.waitForTimeout(700);
+            await page.screenshot({ path: `${OUT}/${vp.name}-break-03-fixed.png` });
+          }
+        } else {
+          errors.push(`[${vp.name}] break card 3: counterexample button not found`);
+        }
+      }
+
+      // --- Experience D: Graph Puzzles ---
+      if (exp.slug === "graph") {
+        if (i === 1) {
+          // Vertex cover: select A and D to cover all edges minimally
+          const nodes = page.locator('[data-offset="0"]').locator("circle.cursor-pointer");
+          if ((await nodes.count()) >= 4) {
+            await nodes.nth(0).click(); // A
+            await page.waitForTimeout(350);
+            await nodes.nth(3).click(); // D
+            await page.waitForTimeout(700);
+            await page.screenshot({ path: `${OUT}/${vp.name}-graph-02-cover.png` });
+          } else {
+            errors.push(`[${vp.name}] graph card 2: vertex nodes not found`);
+          }
+        }
+        if (i === 6) {
+          // Hamiltonian: draw A→B→C→D→E→F→A
+          const nodes = page.locator('[data-offset="0"]').locator("circle.cursor-pointer");
+          if ((await nodes.count()) >= 6) {
+            const order = [0, 1, 2, 3, 4, 5, 0];
+            for (const n of order) {
+              await nodes.nth(n).click({ force: true });
+              await page.waitForTimeout(250);
+            }
+            await page.waitForTimeout(600);
+            await page.screenshot({ path: `${OUT}/${vp.name}-graph-07-cycle.png` });
+          } else {
+            errors.push(`[${vp.name}] graph card 7: hamiltonian nodes not found`);
+          }
+        }
+        if (i === 7) {
+          // Invalid move: A → B → B (revisit)
+          const nodes = page.locator('[data-offset="0"]').locator("circle.cursor-pointer");
+          if ((await nodes.count()) >= 2) {
+            await nodes.nth(0).click({ force: true });
+            await page.waitForTimeout(250);
+            await nodes.nth(1).click({ force: true });
+            await page.waitForTimeout(250);
+            await nodes.nth(0).click({ force: true });
+            await page.waitForTimeout(700);
+            await page.screenshot({ path: `${OUT}/${vp.name}-graph-08-invalid.png` });
+            const invalid = await page.locator('[data-offset="0"]').getByText("You already visited this vertex.").count();
+            if (!invalid) errors.push(`[${vp.name}] graph card 8: invalid-move feedback not shown`);
+          }
+        }
+      }
+
+      // advance
+      await page.keyboard.press("ArrowDown");
+      await page.waitForTimeout(700);
     }
 
-    if (i === 8) {
-      // Recall quiz: click correct
-      const correct = page.locator("button", { hasText: "It recomputes Q/K/V for the whole conversation" });
-      if (await correct.count()) {
-        await correct.first().click();
-        await page.waitForTimeout(900);
-        await page.screenshot({ path: `${OUT}/${vp.name}-card-09-answered.png` });
-      }
-    }
-
-    // advance
-    await page.keyboard.press("ArrowDown");
-    await page.waitForTimeout(700);
+    // End screen
+    await page.waitForTimeout(900);
+    await page.screenshot({ path: `${OUT}/${vp.name}-${exp.slug}-end.png` });
   }
-
-  // End screen
-  await page.waitForTimeout(900);
-  await page.screenshot({ path: `${OUT}/${vp.name}-end.png` });
 
   await page.close();
 }

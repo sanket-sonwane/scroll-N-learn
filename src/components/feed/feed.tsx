@@ -5,22 +5,20 @@ import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import { CardRenderer } from "@/components/cards/renderer";
 import { ProgressDots } from "@/components/feed/progress-dots";
 import { EndCard } from "@/components/feed/end-card";
-import { getTrack } from "@/lib/content/loader";
-import type { Card } from "@/lib/content/types";
+import type { Card, Experience, Track } from "@/lib/content/types";
 import { recordCardSeen } from "@/lib/state/progress";
 import { track as trackEvent } from "@/lib/state/analytics";
 import { usePrefersReducedMotion } from "@/lib/hooks/use-prefers-reduced-motion";
 import { duration, EASE_SOFT, EASE_SPRING } from "@/lib/motion";
 
-const TRACK_ID = "ai-engineering";
-
 type FeedProps = {
+  track: Track;
+  experience: Experience;
   initialIndex: number;
 };
 
-export function Feed({ initialIndex }: FeedProps) {
-  const track = useMemo(() => getTrack(TRACK_ID), []);
-  const cards = useMemo(() => track.cards, [track]);
+export function Feed({ track, experience, initialIndex }: FeedProps) {
+  const cards = useMemo(() => experience.cards, [experience]);
   const total = cards.length;
   const reduced = usePrefersReducedMotion();
 
@@ -34,6 +32,7 @@ export function Feed({ initialIndex }: FeedProps) {
   const settlingRef = useRef(false);
   const wheelLock = useRef(0);
   const indexRef = useRef(index);
+  const dwellRef = useRef({ index: 0, enteredAt: 0 });
 
   useEffect(() => {
     indexRef.current = index;
@@ -86,7 +85,7 @@ export function Feed({ initialIndex }: FeedProps) {
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     if (settlingRef.current) return;
-    if ((e.target as Element).closest?.("button, a")) return;
+    if ((e.target as Element).closest?.("button, a, input")) return;
     const d = dragRef.current;
     d.active = true;
     d.startY = e.clientY;
@@ -148,45 +147,86 @@ export function Feed({ initialIndex }: FeedProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, [go, jump, total]);
 
+  // dwell + attention events
   useEffect(() => {
-    const card = index < total ? cards[index] : null;
-    if (!card) return;
-    recordCardSeen(TRACK_ID, index, card.id);
-    trackEvent({
-      type: "card_view",
-      cardId: card.id,
-      index,
-      ts: Date.now(),
-    });
-  }, [index, cards, total]);
+    const now = Date.now();
+    const prev = dwellRef.current;
+    if (prev.index !== index && prev.index < cards.length) {
+      trackEvent({
+        type: "card_exit",
+        cardId: cards[prev.index].id,
+        index: prev.index,
+        ts: now,
+      });
+    }
+    dwellRef.current = { index, enteredAt: now };
+    if (index < cards.length) {
+      const card = cards[index];
+      recordCardSeen(experience.id, index, card.id);
+      trackEvent({ type: "card_enter", cardId: card.id, index, ts: now });
+      trackEvent({ type: "card_view", cardId: card.id, index, ts: now });
+    } else {
+      trackEvent({
+        type: "experience_complete",
+        experienceId: experience.id,
+        ts: now,
+      });
+    }
+  }, [index, cards, experience.id]);
 
   useEffect(() => {
+    trackEvent({
+      type: "experience_start",
+      experienceId: experience.id,
+      ts: Date.now(),
+    });
     trackEvent({ type: "session_start", cardId: null, ts: Date.now() });
-    return () =>
+    return () => {
       trackEvent({ type: "session_end", cardId: null, ts: Date.now() });
-  }, []);
+      if (dwellRef.current.index < cards.length) {
+        trackEvent({
+          type: "card_exit",
+          cardId: cards[dwellRef.current.index].id,
+          index: dwellRef.current.index,
+          ts: Date.now(),
+        });
+      }
+    };
+  }, [experience.id, cards]);
 
   useEffect(() => {
     try {
-      window.history.replaceState(null, "", `/feed/${index}`);
+      window.history.replaceState(null, "", `/feed/${experience.id}/${index}`);
     } catch {
       /* ignore */
     }
-  }, [index]);
+  }, [index, experience.id]);
 
-  const handleAnswer = useCallback((cardId: string, correct: boolean) => {
-    trackEvent({ type: "prediction_answer", cardId, correct, ts: Date.now() });
-    if (correct) {
-      trackEvent({ type: "prediction_correct", cardId, ts: Date.now() });
-    }
-  }, []);
+  const handleAnswer = useCallback(
+    (cardId: string, correct: boolean) => {
+      const card = cards[indexRef.current];
+      if (card?.type === "quiz") {
+        trackEvent({ type: "learning_check", cardId, correct, ts: Date.now() });
+      } else {
+        trackEvent({ type: "prediction_answer", cardId, correct, ts: Date.now() });
+        if (correct) {
+          trackEvent({ type: "prediction_correct", cardId, ts: Date.now() });
+        }
+      }
+    },
+    [cards],
+  );
 
   const handleReplay = useCallback((cardId: string) => {
     trackEvent({ type: "animation_replay", cardId, ts: Date.now() });
   }, []);
 
   const handleInteract = useCallback((cardId: string) => {
-    trackEvent({ type: "simulation_move", cardId, ts: Date.now() });
+    trackEvent({ type: "interaction_complete", cardId, ts: Date.now() });
+  }, []);
+
+  const handleRank = useCallback((cardId: string, correct: boolean) => {
+    trackEvent({ type: "rank_submit", cardId, correct, ts: Date.now() });
   }, []);
 
   const atEnd = index >= total;
@@ -224,6 +264,7 @@ export function Feed({ initialIndex }: FeedProps) {
             onAnswer={handleAnswer}
             onReplay={handleReplay}
             onInteract={handleInteract}
+            onRank={handleRank}
           />
           {index < total - 1 && (
             <CardLayer
@@ -236,7 +277,7 @@ export function Feed({ initialIndex }: FeedProps) {
           )}
         </>
       ) : (
-        <CardLayerEnd offsetY={offsetY} track={track} onRestart={() => jump(0)} />
+        <CardLayerEnd offsetY={offsetY} track={track} experience={experience} onRestart={() => jump(0)} />
       )}
 
       <ProgressDots count={total} current={Math.min(index, total - 1)} />
@@ -244,7 +285,7 @@ export function Feed({ initialIndex }: FeedProps) {
       <div className="pointer-events-none absolute right-0 bottom-[max(env(safe-area-inset-bottom),1.25rem)] left-0 z-20 flex justify-center">
         <span className="rounded-full border border-edge bg-background/60 px-3 py-1 font-mono text-[0.62rem] tracking-wide text-muted backdrop-blur">
           {atEnd
-            ? "track complete"
+            ? `${experience.name} · complete`
             : `${String(Math.min(index + 1, total)).padStart(2, "0")} / ${String(total).padStart(2, "0")}`}
         </span>
       </div>
@@ -260,6 +301,7 @@ function CardLayer({
   onAnswer,
   onReplay,
   onInteract,
+  onRank,
 }: {
   card: Card;
   active: boolean;
@@ -268,12 +310,14 @@ function CardLayer({
   onAnswer?: (cardId: string, correct: boolean) => void;
   onReplay?: (cardId: string) => void;
   onInteract?: (cardId: string) => void;
+  onRank?: (cardId: string, correct: boolean) => void;
 }) {
   const y = useTransform(offsetY, (v) => `calc(${offset * 100}% + ${v}px)`);
   return (
     <motion.div
       className="absolute inset-0"
       style={{ y, willChange: "transform" }}
+      data-offset={offset}
       aria-hidden={!active}
     >
       <CardRenderer
@@ -282,6 +326,7 @@ function CardLayer({
         onAnswer={onAnswer}
         onReplay={onReplay}
         onInteract={onInteract}
+        onRank={onRank}
       />
     </motion.div>
   );
@@ -290,19 +335,18 @@ function CardLayer({
 function CardLayerEnd({
   offsetY,
   track,
+  experience,
   onRestart,
 }: {
   offsetY: ReturnType<typeof useMotionValue<number>>;
-  track: ReturnType<typeof getTrack>;
+  track: Track;
+  experience: Experience;
   onRestart: () => void;
 }) {
   const y = useTransform(offsetY, (v) => `calc(0% + ${v}px)`);
   return (
-    <motion.div
-      className="absolute inset-0"
-      style={{ y, willChange: "transform" }}
-    >
-      <EndCard track={track} onRestart={onRestart} />
+    <motion.div className="absolute inset-0" style={{ y, willChange: "transform" }}>
+      <EndCard track={track} experience={experience} onRestart={onRestart} />
     </motion.div>
   );
 }

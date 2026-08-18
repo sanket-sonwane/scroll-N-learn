@@ -1,0 +1,352 @@
+{
+  "id": "algorithms-graph",
+  "trackId": "algorithms",
+  "name": "Graph Puzzles",
+  "subtitle": "Solve algorithmic graph problems",
+  "icon": "🕸",
+  "accent": "ai",
+  "connect": ["Graph", "Vertex Cover", "Hamiltonian Cycle", "Explosion"],
+  "next": { "id": "algorithms-complexity", "name": "Complexity Race", "tagline": "Some problems explode when the input grows." },
+  "cards": [
+    {
+      "id": "graph-intro",
+      "concept": "Graph",
+      "type": "visual",
+      "objective": "Introduce graphs as nodes and edges",
+      "hook": "A graph: things, and connections between them.",
+      "statement": "Nodes are objects. Edges are relationships. That is the whole model.",
+      "visual": {
+        "kind": "graphVisual",
+        "config": {
+          "mode": "show",
+          "nodes": [
+            { "id": "A", "label": "A", "x": 30, "y": 25 },
+            { "id": "B", "label": "B", "x": 70, "y": 25 },
+            { "id": "C", "label": "C", "x": 30, "y": 75 },
+            { "id": "D", "label": "D", "x": 70, "y": 75 }
+          ],
+          "edges": [
+            { "source": "A", "target": "B" },
+            { "source": "A", "target": "C" },
+            { "source": "A", "target": "D" },
+            { "source": "B", "target": "D" },
+            { "source": "C", "target": "D" }
+          ]
+        }
+      },
+      "difficulty": 1,
+      "prerequisites": ["graph"],
+      "next": ["graph-vc"],
+      "attentionPattern": "build up the model",
+      "rhythm": "low"
+    },
+    {
+      "id": "graph-vc",
+      "concept": "Vertex cover",
+      "type": "graph",
+      "objective": "Let the learner solve vertex cover by tapping nodes",
+      "hook": "Choose the smallest set of nodes that touches every edge.",
+      "statement": "Tap nodes. A selected node covers every edge it touches. Get it as small as you can.",
+      "visual": {
+        "kind": "graphVisual",
+        "config": {
+          "mode": "vertexCover",
+          "nodes": [
+            { "id": "A", "label": "A", "x": 30, "y": 25 },
+            { "id": "B", "label": "B", "x": 70, "y": 25 },
+            { "id": "C", "label": "C", "x": 30, "y": 75 },
+            { "id": "D", "label": "D", "x": 70, "y": 75 }
+          ],
+          "edges": [
+            { "source": "A", "target": "B" },
+            { "source": "A", "target": "C" },
+            { "source": "A", "target": "D" },
+            { "source": "B", "target": "D" },
+            { "source": "C", "target": "D" }
+          ],
+          "minimalSize": 2
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["graph-intro", "vertex-cover"],
+      "next": ["graph-vc-quiz"],
+      "attentionPattern": "direct manipulation",
+      "rhythm": "high"
+    },
+    {
+      "id": "graph-vc-quiz",
+      "concept": "Vertex cover",
+      "type": "quiz",
+      "objective": "Check the rule that defines a vertex cover",
+      "hook": "Check the rule",
+      "interaction": {
+        "kind": "quiz",
+        "prompt": "In a vertex cover, every edge must be touched by...",
+        "options": [
+          {
+            "label": "at least one selected node",
+            "correct": true,
+            "explanation": "One node can cover many edges at once — that is the whole point."
+          },
+          {
+            "label": "exactly one selected node",
+            "correct": false,
+            "explanation": "An edge between two selected nodes would then break the rule."
+          },
+          {
+            "label": "every node in the graph",
+            "correct": false,
+            "explanation": "Selecting everything covers all edges — but it is never minimal."
+          }
+        ]
+      },
+      "reveal": "Each edge needs at least one endpoint in the set. Fewer is better.",
+      "difficulty": 2,
+      "prerequisites": ["graph-vc"],
+      "next": ["graph-vc-reveal"],
+      "attentionPattern": "rule check",
+      "rhythm": "medium"
+    },
+    {
+      "id": "graph-vc-reveal",
+      "concept": "Vertex cover",
+      "type": "concept",
+      "objective": "Name the concept after the visual experience",
+      "hook": "This is Vertex Cover.",
+      "statement": "The smallest set of nodes that touches every edge.",
+      "facts": [
+        "Every edge has at least one endpoint in the cover.",
+        "Covering is easy.",
+        "Finding the smallest cover gets hard fast."
+      ],
+      "difficulty": 2,
+      "prerequisites": ["graph-vc-quiz", "vertex-cover"],
+      "next": ["graph-vc-scale"],
+      "attentionPattern": "name the thing",
+      "rhythm": "low"
+    },
+    {
+      "id": "graph-vc-scale",
+      "concept": "Vertex cover",
+      "type": "graph",
+      "objective": "Show that bigger graphs make minimality harder",
+      "hook": "Now find the minimum.",
+      "statement": "Cover all eight edges with the fewest nodes. The minimum is three — can you find it?",
+      "visual": {
+        "kind": "graphVisual",
+        "config": {
+          "mode": "vertexCover",
+          "nodes": [
+            { "id": "A", "label": "A", "x": 15, "y": 30 },
+            { "id": "B", "label": "B", "x": 40, "y": 15 },
+            { "id": "C", "label": "C", "x": 70, "y": 25 },
+            { "id": "D", "label": "D", "x": 30, "y": 70 },
+            { "id": "E", "label": "E", "x": 60, "y": 80 },
+            { "id": "F", "label": "F", "x": 85, "y": 60 }
+          ],
+          "edges": [
+            { "source": "A", "target": "B" },
+            { "source": "A", "target": "D" },
+            { "source": "B", "target": "C" },
+            { "source": "B", "target": "D" },
+            { "source": "C", "target": "F" },
+            { "source": "D", "target": "E" },
+            { "source": "D", "target": "F" },
+            { "source": "E", "target": "F" }
+          ],
+          "minimalSize": 3
+        }
+      },
+      "difficulty": 3,
+      "prerequisites": ["graph-vc-reveal"],
+      "next": ["graph-ham-intro"],
+      "attentionPattern": "escalating challenge",
+      "rhythm": "high"
+    },
+    {
+      "id": "graph-ham-intro",
+      "concept": "Hamiltonian cycle",
+      "type": "visual",
+      "objective": "Introduce the Hamiltonian route problem",
+      "hook": "Visit every vertex once. End where you started.",
+      "statement": "Start at A, trace through every vertex exactly once, and close the loop back to A.",
+      "visual": {
+        "kind": "graphVisual",
+        "config": {
+          "mode": "show",
+          "nodes": [
+            { "id": "A", "label": "A", "x": 30, "y": 20 },
+            { "id": "B", "label": "B", "x": 70, "y": 20 },
+            { "id": "C", "label": "C", "x": 90, "y": 50 },
+            { "id": "D", "label": "D", "x": 70, "y": 80 },
+            { "id": "E", "label": "E", "x": 30, "y": 80 },
+            { "id": "F", "label": "F", "x": 10, "y": 50 }
+          ],
+          "edges": [
+            { "source": "A", "target": "B" },
+            { "source": "B", "target": "C" },
+            { "source": "C", "target": "D" },
+            { "source": "D", "target": "E" },
+            { "source": "E", "target": "F" },
+            { "source": "F", "target": "A" },
+            { "source": "B", "target": "D" }
+          ]
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["graph-vc-scale", "graph"],
+      "next": ["graph-ham"],
+      "attentionPattern": "set the challenge",
+      "rhythm": "low"
+    },
+    {
+      "id": "graph-ham",
+      "concept": "Hamiltonian cycle",
+      "type": "graph",
+      "objective": "Let the learner draw a Hamiltonian cycle",
+      "hook": "Draw the route.",
+      "statement": "Tap A, then the next vertex — keep going until every vertex is visited once and you return to A.",
+      "visual": {
+        "kind": "graphVisual",
+        "config": {
+          "mode": "hamiltonian",
+          "nodes": [
+            { "id": "A", "label": "A", "x": 30, "y": 20 },
+            { "id": "B", "label": "B", "x": 70, "y": 20 },
+            { "id": "C", "label": "C", "x": 90, "y": 50 },
+            { "id": "D", "label": "D", "x": 70, "y": 80 },
+            { "id": "E", "label": "E", "x": 30, "y": 80 },
+            { "id": "F", "label": "F", "x": 10, "y": 50 }
+          ],
+          "edges": [
+            { "source": "A", "target": "B" },
+            { "source": "B", "target": "C" },
+            { "source": "C", "target": "D" },
+            { "source": "D", "target": "E" },
+            { "source": "E", "target": "F" },
+            { "source": "F", "target": "A" },
+            { "source": "B", "target": "D" }
+          ],
+          "startNode": "A"
+        }
+      },
+      "difficulty": 3,
+      "prerequisites": ["graph-ham-intro", "hamiltonian-cycle"],
+      "next": ["graph-ham-invalid"],
+      "attentionPattern": "path drawing",
+      "rhythm": "high"
+    },
+    {
+      "id": "graph-ham-invalid",
+      "concept": "Hamiltonian cycle",
+      "type": "graph",
+      "objective": "Demonstrate immediate feedback on invalid moves",
+      "hook": "The graph pushes back.",
+      "statement": "Try revisiting a vertex, or jumping to one with no edge. Every invalid move is rejected instantly.",
+      "visual": {
+        "kind": "graphVisual",
+        "config": {
+          "mode": "hamiltonian",
+          "nodes": [
+            { "id": "A", "label": "A", "x": 20, "y": 20 },
+            { "id": "B", "label": "B", "x": 50, "y": 15 },
+            { "id": "C", "label": "C", "x": 80, "y": 25 },
+            { "id": "D", "label": "D", "x": 30, "y": 70 },
+            { "id": "E", "label": "E", "x": 65, "y": 80 },
+            { "id": "F", "label": "F", "x": 90, "y": 60 }
+          ],
+          "edges": [
+            { "source": "A", "target": "B" },
+            { "source": "B", "target": "C" },
+            { "source": "C", "target": "F" },
+            { "source": "F", "target": "E" },
+            { "source": "E", "target": "D" },
+            { "source": "D", "target": "A" },
+            { "source": "C", "target": "D" }
+          ],
+          "startNode": "A"
+        }
+      },
+      "difficulty": 3,
+      "prerequisites": ["graph-ham"],
+      "next": ["graph-ham-quiz"],
+      "attentionPattern": "safe failure",
+      "rhythm": "high"
+    },
+    {
+      "id": "graph-ham-quiz",
+      "concept": "Hamiltonian cycle",
+      "type": "quiz",
+      "objective": "Name the concept after solving it",
+      "hook": "Name the thing",
+      "interaction": {
+        "kind": "quiz",
+        "prompt": "A route that visits every vertex exactly once and returns to the start is called...",
+        "options": [
+          { "label": "A cycle", "correct": true, "explanation": "Every vertex once, closed back to the start — that is a Hamiltonian cycle." },
+          { "label": "A path", "correct": false, "explanation": "A path visits each vertex once but does not close the loop." },
+          { "label": "A tree", "correct": false, "explanation": "A tree has no cycles at all." },
+          { "label": "A vertex cover", "correct": false, "explanation": "A vertex cover is about touching edges with nodes, not routes." }
+        ]
+      },
+      "reveal": "Visit every vertex once, close the loop — that is a Hamiltonian cycle.",
+      "difficulty": 2,
+      "prerequisites": ["graph-ham-invalid"],
+      "next": ["graph-ham-reveal"],
+      "attentionPattern": "recall check",
+      "rhythm": "medium"
+    },
+    {
+      "id": "graph-ham-reveal",
+      "concept": "Hamiltonian cycle",
+      "type": "concept",
+      "objective": "Formalize the Hamiltonian cycle concept",
+      "hook": "This is a Hamiltonian Cycle.",
+      "statement": "One continuous route that visits every vertex exactly once and returns to the start.",
+      "facts": [
+        "Checking a proposed route is quick.",
+        "Finding one from scratch is the hard part.",
+        "Add a few more vertices and the search explodes."
+      ],
+      "difficulty": 2,
+      "prerequisites": ["graph-ham-quiz", "hamiltonian-cycle"],
+      "next": ["graph-explosion"],
+      "attentionPattern": "formalize",
+      "rhythm": "low"
+    },
+    {
+      "id": "graph-explosion",
+      "concept": "Growth rate",
+      "type": "visual",
+      "objective": "Show why brute-force search explodes",
+      "hook": "Now imagine a much bigger graph.",
+      "statement": "Every decision branches into more possibilities. The search space doubles, then doubles again.",
+      "visual": {
+        "kind": "searchSpace",
+        "config": {
+          "levels": 6,
+          "branches": 2,
+          "label": "32 possible routes"
+        }
+      },
+      "difficulty": 3,
+      "prerequisites": ["graph-ham-reveal", "growth-rate"],
+      "next": ["graph-transition"],
+      "attentionPattern": "exponential reveal",
+      "rhythm": "high"
+    },
+    {
+      "id": "graph-transition",
+      "concept": "Graph",
+      "type": "hook",
+      "objective": "Close the loop back to complexity",
+      "hook": "Some problems have no shortcut.",
+      "statement": "That is where the theory of computational complexity begins.",
+      "difficulty": 1,
+      "prerequisites": ["graph-explosion"],
+      "next": [],
+      "attentionPattern": "forward hook",
+      "rhythm": "low"
+    }
+  ]
+}
