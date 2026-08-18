@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0a0b0f;
+  --color-surface: #12141a;
+  --color-surface-2: #1a1d26;
+  --color-edge: rgba(255, 255, 255, 0.08);
+  --color-edge-strong: rgba(255, 255, 255, 0.16);
+
+  --color-foreground: #edeff4;
+  --color-muted: #9aa1ae;
+  --color-faint: #6b7280;
+
+  --color-info: #5b9bff;
+  --color-success: #34d399;
+  --color-warning: #f5b544;
+  --color-error: #f87171;
+  --color-ai: #a78bfa;
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+:root {
+  --background: #0a0b0f;
+  --foreground: #edeff4;
+  color-scheme: dark;
+}
+
+html {
+  height: 100%;
+  scroll-behavior: auto;
+  background: var(--background);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  overscroll-behavior: none;
+  overflow: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(167, 139, 250, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --- shared visual language ---------------------------------------- */
+
+.glass-panel {
+  background: rgba(18, 20, 26, 0.72);
+  border: 1px solid var(--color-edge);
+  backdrop-filter: blur(14px);
+}
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.font-feature-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ambient background glow used by the feed */
+.ambient-glow {
+  background:
+    radial-gradient(60rem 30rem at 110% -10%, rgba(91, 155, 255, 0.12), transparent 60%),
+    radial-gradient(50rem 28rem at -20% 110%, rgba(167, 139, 250, 0.12), transparent 60%),
+    var(--color-background);
+}

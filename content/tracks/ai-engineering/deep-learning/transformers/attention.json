@@ -1,0 +1,337 @@
+{
+  "id": "ai-engineering",
+  "title": "Transformer Attention",
+  "subtitle": "Why your LLM slows down as the conversation grows",
+  "domain": "AI Engineering",
+  "chapter": "Deep Learning",
+  "topic": "Transformers · Attention",
+  "concepts": [
+    {
+      "id": "autoregressive-generation",
+      "name": "Autoregressive generation",
+      "description": "LLMs write one token at a time, predicting the next token from everything before it."
+    },
+    {
+      "id": "tokens",
+      "name": "Tokens",
+      "description": "Small chunks of text the model reads as its fundamental units."
+    },
+    {
+      "id": "attention",
+      "name": "Attention",
+      "description": "The mechanism that weighs how much each earlier token matters for the next one."
+    },
+    {
+      "id": "qkv",
+      "name": "Query / Key / Value",
+      "description": "Three roles each token plays when the model compares tokens to each other."
+    },
+    {
+      "id": "attention-matrix",
+      "name": "Attention matrix",
+      "description": "The full grid of weights between every pair of tokens, recomputed each step."
+    },
+    {
+      "id": "multi-head-attention",
+      "name": "Multi-head attention",
+      "description": "Running several attention patterns in parallel, each hunting a different relationship."
+    },
+    {
+      "id": "recompute-problem",
+      "name": "The recompute problem",
+      "description": "Each new token re-attends the whole conversation, so cost grows with context."
+    }
+  ],
+  "cards": [
+    {
+      "id": "attention-hook",
+      "concept": "Attention",
+      "type": "hook",
+      "objective": "Create curiosity about why LLMs slow down as context grows.",
+      "hook": "Why does an LLM slow down as the conversation gets longer?",
+      "statement": "The first word feels instant. The thousandth one does not. The answer lives inside how the model \"thinks\" about every word at once.",
+      "difficulty": 1,
+      "prerequisites": [],
+      "next": ["attention-predict-recompute"],
+      "attentionPattern": "question",
+      "rhythm": "low"
+    },
+    {
+      "id": "attention-predict-recompute",
+      "concept": "Autoregressive generation",
+      "type": "prediction",
+      "objective": "Plant the central claim: each new token recomputes attention over the whole conversation.",
+      "hook": "Guess before I show you.",
+      "interaction": {
+        "kind": "predict",
+        "prompt": "Every time the model writes the next word, what does it do with the words it already wrote?",
+        "options": [
+          {
+            "label": "Remembers its past work",
+            "correct": false,
+            "explanation": "Feels natural — but a plain transformer gets no memory for free."
+          },
+          {
+            "label": "Recomputes attention over all of them",
+            "correct": true,
+            "explanation": "Exactly. Each new token re-attends the entire conversation."
+          },
+          {
+            "label": "Only looks at the most recent word",
+            "correct": false,
+            "explanation": "Then language would feel like random word salad."
+          },
+          {
+            "label": "Frozen after the first token",
+            "correct": false,
+            "explanation": "Then it could only ever write one more word."
+          }
+        ]
+      },
+      "reveal": "It recomputes. For every new word, the model re-attends every word that came before. That single fact is the story of everything that follows.",
+      "difficulty": 1,
+      "prerequisites": [],
+      "next": ["attention-tokens"],
+      "attentionPattern": "prediction",
+      "rhythm": "low"
+    },
+    {
+      "id": "attention-tokens",
+      "concept": "Tokens",
+      "type": "visual",
+      "objective": "Show text entering the model as tokens and the model predicting the next token.",
+      "hook": "First — the model can't read letters.",
+      "statement": "Text arrives as tokens, small chunks of words. The model reads the whole sequence at once, then predicts the most likely next token.",
+      "visual": {
+        "kind": "tokenFlow",
+        "config": {
+          "tokens": ["The", "cat", "sat", "on", "the"],
+          "predicted": "mat"
+        }
+      },
+      "footnote": "That prediction is the only thing an LLM ever does: guess the next token, over and over.",
+      "difficulty": 2,
+      "prerequisites": ["autoregressive-generation"],
+      "next": ["attention-relationships"],
+      "attentionPattern": "visual story",
+      "rhythm": "high"
+    },
+    {
+      "id": "attention-relationships",
+      "concept": "Attention",
+      "type": "visual",
+      "objective": "Show attention as a weighting of earlier tokens when predicting the next token.",
+      "hook": "But which earlier words should decide the next one?",
+      "statement": "To choose the next word, the model weighs every earlier word. The ones that matter light up. That weighting — every word versus every word — is attention.",
+      "visual": {
+        "kind": "connectionGraph",
+        "config": {
+          "nodes": [
+            { "id": "the", "label": "the", "kind": "token", "x": 12, "y": 25 },
+            { "id": "cat", "label": "cat", "kind": "token", "x": 37, "y": 25 },
+            { "id": "sat", "label": "sat", "kind": "token", "x": 62, "y": 25 },
+            { "id": "on", "label": "on", "kind": "token", "x": 87, "y": 25 },
+            { "id": "mat", "label": "mat", "kind": "target", "x": 50, "y": 78 }
+          ],
+          "edges": [
+            { "source": "the", "target": "mat", "weight": 0.35 },
+            { "source": "cat", "target": "mat", "weight": 0.8 },
+            { "source": "sat", "target": "mat", "weight": 0.95 },
+            { "source": "on", "target": "mat", "weight": 0.5 }
+          ]
+        }
+      },
+      "footnote": "Watch which connections burn brightest.",
+      "difficulty": 2,
+      "prerequisites": ["tokens"],
+      "next": ["attention-qkv"],
+      "attentionPattern": "transformation",
+      "rhythm": "high"
+    },
+    {
+      "id": "attention-qkv",
+      "concept": "Query / Key / Value",
+      "type": "concept",
+      "objective": "Introduce Q, K, V as the three roles every token plays.",
+      "hook": "So how does the model decide what \"matters\"?",
+      "statement": "For every token, the model builds three representations at once:",
+      "facts": [
+        "Query (Q) — \"what am I looking for?\"",
+        "Key (K) — \"what do I contain?\"",
+        "Value (V) — \"what do I pass along?\""
+      ],
+      "visual": {
+        "kind": "connectionGraph",
+        "config": {
+          "nodes": [
+            { "id": "q", "label": "Q: the", "kind": "query", "x": 18, "y": 45 },
+            { "id": "mat", "label": "K: mat", "kind": "key", "x": 55, "y": 32 },
+            { "id": "sat", "label": "K: sat", "kind": "key", "x": 78, "y": 50 },
+            { "id": "on", "label": "K: on", "kind": "key", "x": 88, "y": 68 }
+          ],
+          "edges": [
+            { "source": "q", "target": "mat", "weight": 0.9 },
+            { "source": "q", "target": "sat", "weight": 0.4 },
+            { "source": "q", "target": "on", "weight": 0.15 }
+          ]
+        }
+      },
+      "footnote": "Relevance between two tokens = how strongly one token's Query aligns with another's Key.",
+      "difficulty": 2,
+      "prerequisites": ["attention"],
+      "next": ["attention-qk-interactive"],
+      "attentionPattern": "progressive reveal",
+      "rhythm": "medium"
+    },
+    {
+      "id": "attention-qk-interactive",
+      "concept": "Dot-product relevance",
+      "type": "simulation",
+      "objective": "Let the learner feel attention weighting by dragging a query toward keys.",
+      "hook": "Don't take my word for it.",
+      "statement": "Drag the query toward a word and watch the keys light up. The closer they align, the higher the attention weight.",
+      "visual": {
+        "kind": "connectionGraph",
+        "config": {
+          "nodes": [
+            { "id": "the", "label": "the", "kind": "key", "x": 12, "y": 25 },
+            { "id": "cat", "label": "cat", "kind": "key", "x": 37, "y": 25 },
+            { "id": "sat", "label": "sat", "kind": "key", "x": 62, "y": 25 },
+            { "id": "on", "label": "on", "kind": "key", "x": 87, "y": 25 },
+            { "id": "q", "label": "Q", "kind": "query", "x": 50, "y": 75 }
+          ],
+          "edges": [
+            { "source": "q", "target": "the", "weight": 0.15 },
+            { "source": "q", "target": "cat", "weight": 0.2 },
+            { "source": "q", "target": "sat", "weight": 0.2 },
+            { "source": "q", "target": "on", "weight": 0.15 }
+          ],
+          "interactive": {
+            "draggableNode": "q",
+            "title": "Drag the Q token",
+            "hint": "The closer to a key, the brighter it becomes."
+          }
+        }
+      },
+      "interaction": {
+        "kind": "sim",
+        "prompt": "Move the query around. What happens to the word that matches?"
+      },
+      "footnote": "Real transformers compute this alignment with a dot product across hundreds of dimensions.",
+      "difficulty": 3,
+      "prerequisites": ["qkv"],
+      "next": ["attention-matrix"],
+      "attentionPattern": "manipulation",
+      "rhythm": "high"
+    },
+    {
+      "id": "attention-matrix",
+      "concept": "Attention matrix",
+      "type": "visual",
+      "objective": "Reveal the full token-by-token attention grid and how it grows.",
+      "hook": "Now scale it up: every token versus every token.",
+      "statement": "To write the next word, the model computes a weight between every pair of tokens. That grid is the attention matrix — and it is recomputed fresh at every step.",
+      "visual": {
+        "kind": "attentionMatrix",
+        "config": {
+          "tokens": ["The", "cat", "sat", "on", "the"],
+          "growToken": "mat"
+        }
+      },
+      "footnote": "Each new token adds an entire row and column to the grid.",
+      "difficulty": 3,
+      "prerequisites": ["qkv"],
+      "next": ["attention-multihead"],
+      "attentionPattern": "cause → effect",
+      "rhythm": "high"
+    },
+    {
+      "id": "attention-multihead",
+      "concept": "Multi-head attention",
+      "type": "visual",
+      "objective": "Show that transformers run many attention patterns in parallel.",
+      "hook": "But one attention pattern isn't enough.",
+      "statement": "A transformer runs this whole comparison in parallel — often 8, 16, or 32 times. Each \"head\" hunts a different relationship: possession, subject–verb, syntax, distance.",
+      "visual": {
+        "kind": "attentionMatrix",
+        "config": {
+          "tokens": ["The", "cat", "sat", "on", "the", "mat"],
+          "heads": [
+            { "label": "possession", "highlights": [[0, 5]] },
+            { "label": "subject–verb", "highlights": [[1, 2]] },
+            { "label": "object", "highlights": [[2, 5]] },
+            { "label": "syntax", "highlights": [[3, 5], [4, 5]] }
+          ]
+        }
+      },
+      "footnote": "8 heads × the same growing grid = the cost multiplies.",
+      "difficulty": 3,
+      "prerequisites": ["attention-matrix"],
+      "next": ["attention-recall"],
+      "attentionPattern": "surprise",
+      "rhythm": "high"
+    },
+    {
+      "id": "attention-recall",
+      "concept": "The recompute problem",
+      "type": "quiz",
+      "objective": "Consolidate the central insight through a quick recall test.",
+      "hook": "Quick check.",
+      "interaction": {
+        "kind": "quiz",
+        "prompt": "One more token in. What happens to everything the model already computed?",
+        "options": [
+          {
+            "label": "It reuses what it already computed",
+            "correct": false,
+            "explanation": "That's exactly what KV Cache does — but a naive transformer doesn't."
+          },
+          {
+            "label": "It recomputes Q/K/V for the whole conversation",
+            "correct": true,
+            "explanation": "Yes. Every token re-attends everything — and that's why long chats get slow."
+          }
+        ]
+      },
+      "reveal": "Every new token recomputes attention for the entire conversation. Long chat → slow chat. That's the problem — and the reason KV Cache exists. But that's a story for another swipe.",
+      "difficulty": 2,
+      "prerequisites": ["attention-matrix", "multi-head-attention"],
+      "next": ["attention-concept-map"],
+      "attentionPattern": "challenge",
+      "rhythm": "low"
+    },
+    {
+      "id": "attention-concept-map",
+      "concept": "The chain so far",
+      "type": "concept_map",
+      "objective": "Close the loop by showing the connected chain of concepts the learner just built.",
+      "hook": "You just built a chain.",
+      "statement": "From raw text all the way to why LLMs slow down:",
+      "conceptMap": {
+        "nodes": [
+          { "id": "tokens", "label": "Tokens" },
+          { "id": "attention", "label": "Attention" },
+          { "id": "qkv", "label": "Q / K / V" },
+          { "id": "matrix", "label": "Attention matrix" },
+          { "id": "heads", "label": "Multi-head" },
+          { "id": "problem", "label": "Recompute problem", "kind": "highlight" },
+          { "id": "cache", "label": "KV Cache (next)" }
+        ],
+        "links": [
+          { "from": "tokens", "to": "attention" },
+          { "from": "attention", "to": "qkv" },
+          { "from": "qkv", "to": "matrix" },
+          { "from": "matrix", "to": "heads" },
+          { "from": "heads", "to": "problem" },
+          { "from": "problem", "to": "cache", "label": "the fix" }
+        ]
+      },
+      "footnote": "You now understand the core of self-attention — the machinery inside every modern LLM.",
+      "difficulty": 2,
+      "prerequisites": ["multi-head-attention", "recompute-problem"],
+      "next": [],
+      "attentionPattern": "rabbit hole",
+      "rhythm": "medium"
+    }
+  ]
+}
