@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SwRegister } from "./sw-register";
 import "./globals.css";
 
@@ -45,6 +46,7 @@ export default function RootLayout({
       <body className="ambient-glow h-full overflow-hidden font-sans">
         {children}
         <SwRegister />
+        <SpeedInsights />
       </body>
     </html>
   );
