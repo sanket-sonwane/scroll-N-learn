@@ -1,0 +1,229 @@
+{
+  "id": "ml-rules-break",
+  "trackId": "ml-zero-to-hero",
+  "name": "Rules Break",
+  "subtitle": "Why hand-coded logic loses to learning",
+  "icon": "📜",
+  "accent": "warning",
+  "connect": ["Rules", "Pattern", "The Paradigm Shift"],
+  "next": {
+    "id": "ml-learning-data",
+    "name": "Learning From Data",
+    "tagline": "The model never saw a rule. So what DID it learn from?"
+  },
+  "cards": [
+    {
+      "id": "ml-rules-hook",
+      "concept": "The ML paradigm",
+      "type": "hook",
+      "objective": "Create curiosity about how learning beats hand-coded rules",
+      "hook": "I bet you can't write 10 rules that beat a program that never saw a rule.",
+      "statement": "Hand-coded logic vs. something that learned from examples. Let's find out which one catches the sneaky stuff.",
+      "difficulty": 1,
+      "prerequisites": [],
+      "next": ["ml-rules-system"],
+      "attentionPattern": "challenge invitation",
+      "rhythm": "low"
+    },
+    {
+      "id": "ml-rules-system",
+      "concept": "Rules-based systems",
+      "type": "concept",
+      "objective": "Define rules-based systems and why they crack",
+      "hook": "A rules-based system: if this, then that.",
+      "statement": "Classic spam filters are lists of suspects. Write a rule for every attack — and every new attack needs a new rule.",
+      "facts": [
+        "`contains \"free\"` is a rule. `fr33` is not.",
+        "A rule is a guess about the future, written in the past.",
+        "Every new attack ships a new rule — forever."
+      ],
+      "difficulty": 1,
+      "prerequisites": ["ml-rules-hook"],
+      "next": ["ml-rules-attack"],
+      "attentionPattern": "quiet definition",
+      "rhythm": "low"
+    },
+    {
+      "id": "ml-rules-attack",
+      "concept": "Rules-based systems",
+      "type": "simulation",
+      "objective": "Let the learner run their own rule filter against an attack corpus",
+      "hook": "Your rules. Real attacks. Live score.",
+      "statement": "Turn rules on, run the attack, watch the leaks. Some attacks slip past no matter what — and one honest email might get caught anyway.",
+      "interaction": {
+        "kind": "sim",
+        "prompt": "Toggle rules, then run the attack."
+      },
+      "visual": {
+        "kind": "rulesBreak",
+        "config": {
+          "mode": "attack",
+          "interactive": true,
+          "rules": [
+            { "id": "r-free", "label": "contains \"free\"", "keyword": "free", "active": true },
+            { "id": "r-urgent", "label": "contains \"urgent\"", "keyword": "urgent", "active": true },
+            { "id": "r-win", "label": "contains \"win\"", "keyword": "win", "active": true },
+            { "id": "r-click", "label": "contains \"click\"", "keyword": "click", "active": false }
+          ],
+          "messages": [
+            { "id": "m1", "text": "FREE iPhone — claim now", "spam": true },
+            { "id": "m2", "text": "Claim your free trial today", "spam": true },
+            { "id": "m3", "text": "fr33 iPhone — claim 0nline", "spam": true },
+            { "id": "m4", "text": "You hav w0n a 100% prize", "spam": true },
+            { "id": "m5", "text": "URGENT: verify your account", "spam": true },
+            { "id": "m6", "text": "Click here — crypto signals", "spam": true },
+            { "id": "m7", "text": "Your free newsletter is ready", "spam": false },
+            { "id": "m8", "text": "Meeting notes from yesterday", "spam": false },
+            { "id": "m9", "text": "Lunch at 1pm?", "spam": false }
+          ]
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["ml-rules-system"],
+      "next": ["ml-rules-predict"],
+      "attentionPattern": "interactive attack",
+      "rhythm": "high"
+    },
+    {
+      "id": "ml-rules-predict",
+      "concept": "The ML paradigm",
+      "type": "prediction",
+      "objective": "Force a commitment about rules vs learned patterns",
+      "hook": "Fight the next wave",
+      "interaction": {
+        "kind": "predict",
+        "prompt": "Your rules caught 4 of 7 spam messages. A model that never saw a rule is about to face the same corpus. Who catches more?",
+        "options": [
+          {
+            "label": "My rules — the attacks match what I wrote",
+            "correct": false,
+            "explanation": "The next attack doesn't care what you wrote. Leet-speak, synonyms and new phrasings slip past every keyword you invented."
+          },
+          {
+            "label": "The model — it learned from examples, not keywords",
+            "correct": true,
+            "explanation": "The model never saw the word \"free\". It saw hundreds of spam examples and learned what spam looks like."
+          },
+          {
+            "label": "We tie",
+            "correct": false,
+            "explanation": "You caught the ones written to your rules. It caught the ones you never imagined. Not a tie."
+          }
+        ]
+      },
+      "reveal": "Rules memorize cases. A learned model generalizes a pattern. That gap only grows as attacks get sneakier.",
+      "difficulty": 2,
+      "prerequisites": ["ml-rules-attack", "ml-paradigm"],
+      "next": ["ml-rules-model"],
+      "attentionPattern": "predict then payoff",
+      "rhythm": "high"
+    },
+    {
+      "id": "ml-rules-model",
+      "concept": "Generalization",
+      "type": "visual",
+      "objective": "Show the model beating the rule list on the same corpus",
+      "hook": "Now watch the model do it.",
+      "statement": "No rule was ever written for \"fr33\" or \"100% win\". The rules leak. The model doesn't — it learned the pattern, not the rule.",
+      "visual": {
+        "kind": "rulesBreak",
+        "config": {
+          "mode": "model",
+          "rules": [
+            { "id": "r-free", "label": "contains \"free\"", "keyword": "free", "active": true },
+            { "id": "r-urgent", "label": "contains \"urgent\"", "keyword": "urgent", "active": true },
+            { "id": "r-win", "label": "contains \"win\"", "keyword": "win", "active": true },
+            { "id": "r-click", "label": "contains \"click\"", "keyword": "click", "active": true }
+          ],
+          "messages": [
+            { "id": "m1", "text": "FREE iPhone — claim now", "spam": true },
+            { "id": "m2", "text": "Claim your free trial today", "spam": true },
+            { "id": "m3", "text": "fr33 iPhone — claim 0nline", "spam": true },
+            { "id": "m4", "text": "You hav w0n a 100% prize", "spam": true },
+            { "id": "m5", "text": "URGENT: verify your account", "spam": true },
+            { "id": "m6", "text": "Click here — crypto signals", "spam": true },
+            { "id": "m7", "text": "Your free newsletter is ready", "spam": false },
+            { "id": "m8", "text": "Meeting notes from yesterday", "spam": false },
+            { "id": "m9", "text": "Lunch at 1pm?", "spam": false }
+          ],
+          "modelMisses": []
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["ml-rules-predict"],
+      "next": ["ml-rules-paradigm"],
+      "attentionPattern": "reveal the gap",
+      "rhythm": "medium"
+    },
+    {
+      "id": "ml-rules-paradigm",
+      "concept": "The ML paradigm",
+      "type": "concept",
+      "objective": "Compress the rules-vs-learning shift into one frame",
+      "hook": "Data → Model → Prediction. That's the whole shift.",
+      "statement": "Rules are written for cases you can imagine. Models learn patterns you can't.",
+      "facts": [
+        "A rule says \"if this, then that\".",
+        "A learned model says \"based on what I've seen, this looks like that\".",
+        "The model's \"rules\" come from examples, not engineers."
+      ],
+      "difficulty": 1,
+      "prerequisites": ["ml-rules-model", "ml-paradigm"],
+      "next": ["ml-rules-quiz"],
+      "attentionPattern": "quiet compression",
+      "rhythm": "low"
+    },
+    {
+      "id": "ml-rules-quiz",
+      "concept": "Generalization",
+      "type": "quiz",
+      "objective": "Check that the learner can name why the model won",
+      "hook": "Why did it win?",
+      "interaction": {
+        "kind": "quiz",
+        "prompt": "Why did the model catch messages your rules missed?",
+        "options": [
+          {
+            "label": "It's smarter than your rules",
+            "correct": false,
+            "explanation": "It's not smarter — it never \"knew\" anything at all. It learned."
+          },
+          {
+            "label": "It generalized a pattern from examples",
+            "correct": true,
+            "explanation": "Hundreds of spam examples taught it what spam looks like — including phrasings no one wrote down."
+          },
+          {
+            "label": "Someone hid extra rules inside it",
+            "correct": false,
+            "explanation": "That's the trick — nobody can hide rules it never saw. The pattern came from data."
+          }
+        ]
+      },
+      "reveal": "Generalization: catching things you never explicitly listed.",
+      "difficulty": 1,
+      "prerequisites": ["ml-rules-paradigm", "generalization"],
+      "next": ["ml-rules-scale"],
+      "attentionPattern": "check understanding",
+      "rhythm": "medium"
+    },
+    {
+      "id": "ml-rules-scale",
+      "concept": "Rules-based systems",
+      "type": "concept",
+      "objective": "Close the module by showing why rules do not scale",
+      "hook": "One new attack. One new rule. Forever.",
+      "statement": "A model doesn't append rules — it updates its understanding. And the next wave of spam writes itself into next week's examples.",
+      "facts": [
+        "Every rule is debt someone maintains.",
+        "Every model is a one-time understanding that keeps improving.",
+        "The spam adapts. So must we."
+      ],
+      "difficulty": 2,
+      "prerequisites": ["ml-rules-quiz"],
+      "next": [],
+      "attentionPattern": "closing tension",
+      "rhythm": "low"
+    }
+  ]
+}

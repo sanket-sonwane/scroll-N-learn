@@ -1,0 +1,251 @@
+{
+  "id": "ml-learning-data",
+  "trackId": "ml-zero-to-hero",
+  "name": "Learning From Data",
+  "subtitle": "The answer key that teaches",
+  "icon": "🎯",
+  "accent": "ai",
+  "connect": ["Labels", "Quality", "Supervised", "Unsupervised"],
+  "next": {
+    "id": "ml-fit-line",
+    "name": "Fit the Line",
+    "tagline": "The simplest learner in existence — and you'll drag it yourself."
+  },
+  "cards": [
+    {
+      "id": "ml-data-hook",
+      "concept": "Examples teach",
+      "type": "hook",
+      "objective": "Ask how a single example teaches a model",
+      "hook": "The model never saw a rule. It learned from one thing: examples. How does one example teach?",
+      "statement": "Every spam or ham example is a tiny lesson. Enough lessons, and the model writes its own rules for things you never even described.",
+      "difficulty": 1,
+      "prerequisites": [],
+      "next": ["ml-data-labels"],
+      "attentionPattern": "question",
+      "rhythm": "low"
+    },
+    {
+      "id": "ml-data-labels",
+      "concept": "Labeled data",
+      "type": "concept",
+      "objective": "Define the label as the answer key attached to an example",
+      "hook": "Examples come with an answer key: labels.",
+      "statement": "\"This email is spam.\" — one dot, one lesson. A label is the truth the example teaches.",
+      "facts": [
+        "A label answers one question about one example.",
+        "Labels turn raw data into a lesson plan.",
+        "The model's teachers are labeled examples."
+      ],
+      "difficulty": 1,
+      "prerequisites": ["ml-data-hook", "labeled-data"],
+      "next": ["ml-data-stream"],
+      "attentionPattern": "quiet definition",
+      "rhythm": "low"
+    },
+    {
+      "id": "ml-data-stream",
+      "concept": "Examples teach",
+      "type": "visual",
+      "objective": "Show labeled examples streaming into a model and shifting its confidence",
+      "hook": "Watch the confidence meter. Every example moves it.",
+      "statement": "Each dot is a labeled email. As the model sees more examples, its guesses get better — watch the mistakes thin out across the row.",
+      "interaction": {
+        "kind": "sim",
+        "prompt": "Let the examples stream in. Watch accuracy climb — but never to 100%."
+      },
+      "visual": {
+        "kind": "exampleStream",
+        "config": {
+          "positive": "spam",
+          "negative": "ham",
+          "mode": "labeled",
+          "count": 14,
+          "noiseDial": false
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["ml-data-labels"],
+      "next": ["ml-data-predict"],
+      "attentionPattern": "learning unfolds",
+      "rhythm": "medium"
+    },
+    {
+      "id": "ml-data-predict",
+      "concept": "Data quality",
+      "type": "prediction",
+      "objective": "Seed the quality-over-quantity lesson",
+      "hook": "More is better?",
+      "interaction": {
+        "kind": "predict",
+        "prompt": "\"More examples always help.\" Always?",
+        "options": [
+          {
+            "label": "Yes — quantity is king",
+            "correct": false,
+            "explanation": "Only if the examples are true. Wrong labels teach the model lies."
+          },
+          {
+            "label": "Only if they're actually true",
+            "correct": true,
+            "explanation": "One clean example teaches a truth. One dirty example teaches a lie. The lie can win."
+          },
+          {
+            "label": "No — they confuse it after a point",
+            "correct": false,
+            "explanation": "More true examples rarely hurt. More wrong examples always do."
+          }
+        ]
+      },
+      "reveal": "It's not the number of examples. It's how true they are. Next: poison the stream and watch the model pay for it.",
+      "difficulty": 2,
+      "prerequisites": ["ml-data-stream"],
+      "next": ["ml-data-noise"],
+      "attentionPattern": "predict then payoff",
+      "rhythm": "high"
+    },
+    {
+      "id": "ml-data-noise",
+      "concept": "Data quality",
+      "type": "simulation",
+      "objective": "Let the learner mislabel examples and watch accuracy collapse",
+      "hook": "Flip a few labels. Watch the model get lied to.",
+      "statement": "Drag the noise dial to mislabel examples. The model can't tell which lessons are lies — it just learns them all.",
+      "interaction": {
+        "kind": "sim",
+        "prompt": "Raise the noise. Watch accuracy drop in real time."
+      },
+      "visual": {
+        "kind": "exampleStream",
+        "config": {
+          "positive": "spam",
+          "negative": "ham",
+          "mode": "labeled",
+          "count": 14,
+          "noiseDial": true
+        }
+      },
+      "difficulty": 2,
+      "prerequisites": ["ml-data-predict"],
+      "next": ["ml-data-quality"],
+      "attentionPattern": "interactive corruption",
+      "rhythm": "high"
+    },
+    {
+      "id": "ml-data-quality",
+      "concept": "Data quality",
+      "type": "concept",
+      "objective": "Compress the quality lesson",
+      "hook": "One mislabeled example teaches a lie. Ten of them teach a story.",
+      "statement": "A handful of clean examples can beat a pile of dirty ones — every time.",
+      "facts": [
+        "Quality beats quantity.",
+        "A model trained on lies, lies.",
+        "Clean data is the first model."
+      ],
+      "difficulty": 1,
+      "prerequisites": ["ml-data-noise", "data-quality"],
+      "next": ["ml-data-branches"],
+      "attentionPattern": "quiet compression",
+      "rhythm": "low"
+    },
+    {
+      "id": "ml-data-branches",
+      "concept": "Supervised learning",
+      "type": "concept_map",
+      "objective": "Introduce the three learning families",
+      "hook": "Same data, three ways to learn.",
+      "statement": "With answers (supervised) · Without answers (unsupervised) · Trial-and-error (reinforcement).",
+      "conceptMap": {
+        "nodes": [
+          { "id": "supervised", "label": "Supervised · with answers", "kind": "highlight" },
+          { "id": "unsupervised", "label": "Unsupervised · no answers", "kind": "concept" },
+          { "id": "reinforcement", "label": "Reinforcement · trial & error", "kind": "concept" }
+        ],
+        "links": [
+          { "from": "supervised", "to": "unsupervised", "label": "vs" },
+          { "from": "unsupervised", "to": "reinforcement", "label": "vs" }
+        ]
+      },
+      "difficulty": 1,
+      "prerequisites": ["ml-data-quality"],
+      "next": ["ml-data-unlabeled"],
+      "attentionPattern": "map of the field",
+      "rhythm": "medium"
+    },
+    {
+      "id": "ml-data-unlabeled",
+      "concept": "Unsupervised learning",
+      "type": "visual",
+      "objective": "Show the same stream with labels removed",
+      "hook": "Take the labels away.",
+      "statement": "Same dots. No answers. The structure is still there — but nothing tells the model what it means.",
+      "visual": {
+        "kind": "exampleStream",
+        "config": {
+          "positive": "spam",
+          "negative": "ham",
+          "mode": "unlabeled",
+          "count": 14
+        }
+      },
+      "difficulty": 1,
+      "prerequisites": ["ml-data-branches", "unsupervised-learning"],
+      "next": ["ml-data-quiz"],
+      "attentionPattern": "reveal the contrast",
+      "rhythm": "medium"
+    },
+    {
+      "id": "ml-data-quiz",
+      "concept": "Supervised learning",
+      "type": "quiz",
+      "objective": "Check the learner can classify a real dataset by learning type",
+      "hook": "Name that learning",
+      "interaction": {
+        "kind": "quiz",
+        "prompt": "A store gives you purchase history with \"bought / didn't buy\" labels. What kind of learning?",
+        "options": [
+          {
+            "label": "Supervised — examples with an answer key",
+            "correct": true,
+            "explanation": "Each row already has the answer attached. The model learns from it."
+          },
+          {
+            "label": "Unsupervised — no answer key at all",
+            "correct": false,
+            "explanation": "Unsupervised would get the rows with no labels and only find structure."
+          },
+          {
+            "label": "Reinforcement — learn from rewards",
+            "correct": false,
+            "explanation": "Reinforcement learns from trial, error and feedback — not from a fixed answer key."
+          }
+        ]
+      },
+      "reveal": "Labels = supervised. No labels = unsupervised. Feedback = reinforcement.",
+      "difficulty": 2,
+      "prerequisites": ["ml-data-unlabeled", "supervised-learning"],
+      "next": ["ml-data-close"],
+      "attentionPattern": "check understanding",
+      "rhythm": "medium"
+    },
+    {
+      "id": "ml-data-close",
+      "concept": "The ML paradigm",
+      "type": "concept",
+      "objective": "Close the module and point toward regression",
+      "hook": "This whole course is one question: how do examples teach a model?",
+      "statement": "Next: the simplest learner in existence — a model that fits a line. And you'll drag it yourself.",
+      "facts": [
+        "Rules broke — data teaches.",
+        "Labels give it answers — quality decides what it learns.",
+        "A line is next, then a valley, then a boundary."
+      ],
+      "difficulty": 1,
+      "prerequisites": ["ml-data-quiz"],
+      "next": [],
+      "attentionPattern": "closing tease",
+      "rhythm": "low"
+    }
+  ]
+}

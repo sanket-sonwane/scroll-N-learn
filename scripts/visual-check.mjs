@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, "..", "qa", "screenshots");
 mkdirSync(OUT, { recursive: true });
 
-const BASE = "http://localhost:3000";
+const BASE = process.env.QABASE ?? "http://localhost:3000";
 const errors = [];
 
 const viewports = [

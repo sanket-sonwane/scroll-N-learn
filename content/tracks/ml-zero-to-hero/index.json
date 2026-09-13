@@ -1,0 +1,50 @@
+{
+  "id": "ml-zero-to-hero",
+  "title": "Machine Learning — Zero to Hero",
+  "subtitle": "From your first label to full neural networks",
+  "domain": "Machine Learning",
+  "chapter": "Foundations · Data & Learning",
+  "topic": "What is ML · Data · Learning",
+  "concepts": [
+    {
+      "id": "ml-paradigm",
+      "name": "The ML paradigm",
+      "description": "Programs that write themselves from data instead of rules."
+    },
+    {
+      "id": "rules-based-systems",
+      "name": "Rules-based systems",
+      "description": "Hand-coded if-then logic, and where it cracks."
+    },
+    {
+      "id": "examples-teach",
+      "name": "Examples teach",
+      "description": "Labeled examples are the model's teachers."
+    },
+    {
+      "id": "labeled-data",
+      "name": "Labeled data",
+      "description": "Examples that come with their answer key."
+    },
+    {
+      "id": "data-quality",
+      "name": "Data quality",
+      "description": "Clean examples beat dirty piles of them."
+    },
+    {
+      "id": "generalization",
+      "name": "Generalization",
+      "description": "Learning the pattern, not memorizing the case."
+    },
+    {
+      "id": "supervised-learning",
+      "name": "Supervised learning",
+      "description": "Learning with an answer key."
+    },
+    {
+      "id": "unsupervised-learning",
+      "name": "Unsupervised learning",
+      "description": "Learning without an answer key."
+    }
+  ]
+}

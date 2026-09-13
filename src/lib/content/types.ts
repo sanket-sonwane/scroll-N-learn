@@ -123,28 +123,60 @@ const CurveToLoopConfig = z.object({
   n: z.number().default(10),
 });
 
-export const VisualSpec = z.object({
-  kind: z.enum([
-    "tokenFlow",
-    "connectionGraph",
-    "attentionMatrix",
-    "growthRace",
-    "arrayRunner",
-    "graphVisual",
-    "searchSpace",
-    "curveToLoop",
-  ]),
-  config: z.union([
-    TokenFlowConfig,
-    ConnectionGraphConfig,
-    AttentionMatrixConfig,
-    GrowthRaceConfig,
-    ArrayRunnerConfig,
-    GraphVisualConfig,
-    SearchSpaceConfig,
-    CurveToLoopConfig,
-  ]),
+const RuleDef = z.object({
+  id: z.string(),
+  label: z.string(),
+  keyword: z.string(),
+  active: z.boolean().optional().default(true),
 });
+
+const AttackMessage = z.object({
+  id: z.string(),
+  text: z.string(),
+  spam: z.boolean(),
+});
+
+const RulesBreakConfig = z.object({
+  mode: z.enum(["attack", "model"]).default("attack"),
+  interactive: z.boolean().default(false),
+  rules: z.array(RuleDef).min(1),
+  messages: z.array(AttackMessage).min(1),
+  modelMisses: z.array(z.string()).optional(),
+});
+
+const ExampleStreamConfig = z.object({
+  positive: z.string().default("spam"),
+  negative: z.string().default("ham"),
+  count: z.number().default(14),
+  mode: z.enum(["labeled", "unlabeled"]).default("labeled"),
+  noiseDial: z.boolean().default(false),
+  seed: z.number().default(7),
+});
+
+export const VisualSpec = z.discriminatedUnion(
+  "kind",
+  [
+    z.object({ kind: z.literal("tokenFlow"), config: TokenFlowConfig }),
+    z.object({
+      kind: z.literal("connectionGraph"),
+      config: ConnectionGraphConfig,
+    }),
+    z.object({
+      kind: z.literal("attentionMatrix"),
+      config: AttentionMatrixConfig,
+    }),
+    z.object({ kind: z.literal("growthRace"), config: GrowthRaceConfig }),
+    z.object({ kind: z.literal("arrayRunner"), config: ArrayRunnerConfig }),
+    z.object({ kind: z.literal("graphVisual"), config: GraphVisualConfig }),
+    z.object({ kind: z.literal("searchSpace"), config: SearchSpaceConfig }),
+    z.object({ kind: z.literal("curveToLoop"), config: CurveToLoopConfig }),
+    z.object({ kind: z.literal("rulesBreak"), config: RulesBreakConfig }),
+    z.object({
+      kind: z.literal("exampleStream"),
+      config: ExampleStreamConfig,
+    }),
+  ],
+);
 
 const ChoiceOption = z.object({
   label: z.string(),
@@ -290,4 +322,6 @@ export type ArrayRunnerConfigType = z.infer<typeof ArrayRunnerConfig>;
 export type GraphVisualConfigType = z.infer<typeof GraphVisualConfig>;
 export type SearchSpaceConfigType = z.infer<typeof SearchSpaceConfig>;
 export type CurveToLoopConfigType = z.infer<typeof CurveToLoopConfig>;
+export type RulesBreakConfigType = z.infer<typeof RulesBreakConfig>;
+export type ExampleStreamConfigType = z.infer<typeof ExampleStreamConfig>;
 export type ChallengeConfigType = z.infer<typeof ChallengeConfig>;

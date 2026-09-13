@@ -147,6 +147,12 @@ export default function Home() {
             <Chip tone="info">~40 cards</Chip>
           </div>
           <Link
+            href="/track/ml"
+            className="text-sm text-faint transition-colors hover:text-muted"
+          >
+            Switch track · ML Zero to Hero →
+          </Link>
+          <Link
             href="/track/attention"
             className="text-sm text-faint transition-colors hover:text-muted"
           >

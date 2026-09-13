@@ -10,6 +10,9 @@ import complexityRace from "../../../content/tracks/algorithms/complexity-race.j
 import algorithmExecution from "../../../content/tracks/algorithms/algorithm-execution.json";
 import breakTheAlgorithm from "../../../content/tracks/algorithms/break-the-algorithm.json";
 import graphPuzzle from "../../../content/tracks/algorithms/graph-puzzle.json";
+import mlIndex from "../../../content/tracks/ml-zero-to-hero/index.json";
+import mlRulesBreak from "../../../content/tracks/ml-zero-to-hero/e01-rules-break.json";
+import mlLearningData from "../../../content/tracks/ml-zero-to-hero/e02-learning-from-data.json";
 
 const algorithmsTrack = {
   ...(algorithmsIndex as object),
@@ -21,9 +24,15 @@ const algorithmsTrack = {
   ],
 } as unknown as Track;
 
+const mlTrack = {
+  ...(mlIndex as object),
+  experiences: [mlRulesBreak, mlLearningData],
+} as unknown as Track;
+
 const TRACKS: Record<string, Track> = {
   "ai-engineering": attentionTrack as unknown as Track,
   algorithms: algorithmsTrack,
+  "ml-zero-to-hero": mlTrack,
 };
 
 const parsed = new Map<string, Track>();

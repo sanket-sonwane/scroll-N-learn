@@ -33,6 +33,12 @@ const SearchSpace = dynamic(() =>
 const CurveToLoop = dynamic(() =>
   import("@/components/primitives/curve-to-loop").then((m) => m.CurveToLoop),
 );
+const RulesBreak = dynamic(() =>
+  import("@/components/primitives/rules-break").then((m) => m.RulesBreak),
+);
+const ExampleStream = dynamic(() =>
+  import("@/components/primitives/example-stream").then((m) => m.ExampleStream),
+);
 
 type PrimitiveVisualProps = {
   visual: VisualSpecType;
@@ -154,6 +160,32 @@ export function PrimitiveVisual({
             config={config as never}
             active={active}
             playKey={playKey}
+            className="text-foreground"
+          />
+        </div>
+      );
+    case "rulesBreak":
+      return (
+        <div className={`mx-auto w-full ${className}`}>
+          <RulesBreak
+            key={playKey}
+            config={config as never}
+            active={active}
+            playKey={playKey}
+            onInteract={onInteract}
+            className="text-foreground"
+          />
+        </div>
+      );
+    case "exampleStream":
+      return (
+        <div className={`mx-auto w-full ${className}`}>
+          <ExampleStream
+            key={playKey}
+            config={config as never}
+            active={active}
+            playKey={playKey}
+            onInteract={onInteract}
             className="text-foreground"
           />
         </div>
